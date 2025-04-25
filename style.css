@@ -7,7 +7,7 @@
 }
 
 body {
-    background-color: #f4f4f4;
+    background-color: #f3ebeb;
 }
 
 /* Header Styling */
@@ -214,3 +214,9 @@ footer {
     scroll-snap-align: start;
 }
 
+h3 {
+    text-align: left;
+    display: block;
+    margin-left: 0;
+    padding: 1%;
+  }

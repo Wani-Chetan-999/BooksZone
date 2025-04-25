@@ -3,26 +3,40 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-  let filePath = '';
+  let filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+  let extname = path.extname(filePath);
   let contentType = 'text/html';
 
-  if (req.url === '/' || req.url === '/index.html') {
-    filePath = 'index.html';
-  } else if (req.url === '/about.html') {
-    filePath = 'about.html';
-  } else if (req.url === '/style.css') {
-    filePath = 'style.css';
-    contentType = 'text/css';
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Page Not Found File/server Error');
-    return;
+  // Set content type based on extension
+  switch (extname) {
+    case '.js':
+      contentType = 'text/javascript';
+      break;
+    case '.css':
+      contentType = 'text/css';
+      break;
+    case '.json':
+      contentType = 'application/json';
+      break;
+    case '.png':
+      contentType = 'image/png';
+      break;
+    case '.jpg':
+    case '.jpeg':
+      contentType = 'image/jpeg';
+      break;
+    case '.gif':
+      contentType = 'image/gif';
+      break;
+    case '.svg':
+      contentType = 'image/svg+xml';
+      break;
   }
 
-  fs.readFile(path.join(__dirname, filePath), (err, data) => {
+  fs.readFile(filePath, (err, data) => {
     if (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end('Server Error');
+      res.writeHead(err.code === 'ENOENT' ? 404 : 500, { 'Content-Type': 'text/plain' });
+      res.end(err.code === 'ENOENT' ? '404 Not Found' : 'Server Error');
     } else {
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(data);
